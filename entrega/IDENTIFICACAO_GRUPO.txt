@@ -1,0 +1,11 @@
+GLOBAL SOLUTION 2026/2 - FIAP
+Disciplina: Advanced Business Development with .NET
+Projeto: FloodShield - API de Abrigos e Pontos de Apoio (CitizenTech)
+
+Link do repositório GitHub: <COLE_AQUI_O_LINK>
+
+Integrantes do grupo:
+Guilherme de Andrade Martini — RM 566087  
+Bruno Vinicius Barbosa — RM 566366 
+Nathan Gonçalves Pereira Mendes — RM 564666 
+Raphael Gomes Mancera — RM 562279 
