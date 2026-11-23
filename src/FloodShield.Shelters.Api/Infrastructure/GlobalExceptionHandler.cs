@@ -4,21 +4,40 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FloodShield.Shelters.Api.Infrastructure;
 
-/// <summary>Regra de negócio violada => 422; qualquer outra exceção => 500 sem vazar detalhes.</summary>
+/// <summary>Regra de negócio => 422; requisição malformada => 400; qualquer outra exceção => 500.</summary>
 public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken ct)
     {
-        var isDomain = exception is DomainException;
-        if (!isDomain)
-            logger.LogError(exception, "Erro não tratado em {Path}", context.Request.Path);
+        int status;
+        string title;
+        string? detail = null;
 
-        context.Response.StatusCode = isDomain ? StatusCodes.Status422UnprocessableEntity : StatusCodes.Status500InternalServerError;
+        switch (exception)
+        {
+            case DomainException:
+                status = StatusCodes.Status422UnprocessableEntity;
+                title = "Regra de negócio violada";
+                detail = exception.Message;
+                break;
+            case BadHttpRequestException bad:
+                status = bad.StatusCode;
+                title = "Requisição inválida";
+                detail = "O corpo ou os parâmetros da requisição estão malformados (verifique o JSON).";
+                break;
+            default:
+                logger.LogError(exception, "Erro não tratado em {Path}", context.Request.Path);
+                status = StatusCodes.Status500InternalServerError;
+                title = "Erro interno do servidor";
+                break;
+        }
+
+        context.Response.StatusCode = status;
         await context.Response.WriteAsJsonAsync(new ProblemDetails
         {
-            Status = context.Response.StatusCode,
-            Title = isDomain ? "Regra de negócio violada" : "Erro interno do servidor",
-            Detail = isDomain ? exception.Message : null
+            Status = status,
+            Title = title,
+            Detail = detail
         }, ct);
         return true;
     }

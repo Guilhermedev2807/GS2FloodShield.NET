@@ -1,6 +1,7 @@
 GLOBAL SOLUTION 2026/2 - FIAP
 Disciplina: Advanced Business Development with .NET
 Projeto: FloodShield - API de Abrigos e Pontos de Apoio (CitizenTech)
+Turma: 2TDSPX
 
 Link do repositório GitHub: https://github.com/Guilhermedev2807/GS2FloodShield.NET
 
